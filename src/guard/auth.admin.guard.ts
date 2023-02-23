@@ -1,20 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuardAdmin implements CanActivate {
   constructor(private jwtService: JwtService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    // console.log('req:', request.headers['authorization']);
+    // const bearer = request.headers['authorization']);
     // console.log(request.header('authorization'));
     const bearer = request.header('authorization');
-    // console.log('Bearer:', Bearer);
+    console.log('Bearer:', bearer);
     bearer.replace('Bearer ', '');
 
     const parts = bearer.split(' ');
-    // console.log('  ', parts);
+    console.log('parts:  ', parts);
     if (parts.length === 2) {
       const token = parts[1];
       console.log(token);
@@ -27,13 +32,19 @@ export class AuthGuard implements CanActivate {
           console.log('success');
           return true;
         }
-      } catch {
-        console.log('failed');
-        console.log(Error);
-        return false;
+      } catch (error) {
+        throw new HttpException(
+          {
+            status: HttpStatus.FORBIDDEN,
+            error: 'UnMatched token code',
+          },
+          HttpStatus.FORBIDDEN,
+          {
+            cause: error,
+          },
+        );
       }
     }
     return false;
-    // return validateRequest(request);
   }
 }

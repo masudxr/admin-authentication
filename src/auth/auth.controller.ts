@@ -6,7 +6,7 @@ import {
   Get,
   Body,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/guard/auth.guard';
+import { AuthGuardAdmin } from 'src/guard/auth.admin.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -21,9 +21,23 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuardAdmin)
   @Get('profile')
   getHello(@Request() req) {
+    return req.user;
+  }
+
+  @Post('customer/login')
+  async ctmLogin(@Body() req) {
+    console.log('REQ:', req);
+    const customer = await this.authService.login(req);
+    console.log('customer:', customer);
+    return customer;
+  }
+
+  @UseGuards(AuthGuardAdmin)
+  @Get('customer/profile')
+  getcustomer(@Request() req) {
     return req.user;
   }
 }
