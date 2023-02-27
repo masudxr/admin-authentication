@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
   CanActivate,
@@ -7,14 +6,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { stringify } from 'querystring';
-import { AdminService } from 'src/admin/admin.service';
+import { CustomersService } from 'src/customers/customers.service';
 
 @Injectable()
-export class AuthGuardAdmin implements CanActivate {
+export class AuthCustomerGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
-    private adminService: AdminService,
+    private customerService: CustomersService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -33,16 +31,16 @@ export class AuthGuardAdmin implements CanActivate {
         const ver = await this.jwtService.verifyAsync(token, {
           secret: 'SECRET',
         });
-        const admin = this.adminService.findOne(ver.username);
-        if (admin) {
-          console.log('Successful authentication:', (await admin).name);
+        const customer = this.customerService.findOne(ver.username);
+        if (customer) {
+          console.log('Successful authentication:', (await customer).name);
           return true;
         }
       } catch (error) {
         throw new HttpException(
           {
             status: HttpStatus.FORBIDDEN,
-            error: 'Unauthorize !!',
+            error: 'UnAuthorized',
           },
           HttpStatus.FORBIDDEN,
           {

@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuardAdmin } from 'src/guard/auth.admin.guard';
+
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Controller('category')
+@UseGuards(AuthGuardAdmin)
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 

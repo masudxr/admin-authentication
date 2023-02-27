@@ -6,33 +6,37 @@ import {
   Param,
   Delete,
   Put,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
-// import { AuthenticateGuard } from 'src/guard/controller';
+import { AuthGuardAdmin } from 'src/guard/auth.admin.guard';
+import { AuthCustomerGuard } from 'src/guard/auth.customer.guard';
+
 import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 @Controller('customers')
-// @UseGuards(AuthenticateGuard)
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
+  @UseGuards(AuthCustomerGuard)
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customersService.create(createCustomerDto);
   }
-
+  @UseGuards(AuthCustomerGuard)
   @Get()
   findAll() {
     return this.customersService.findAll();
   }
 
+  @UseGuards(AuthCustomerGuard)
   @Get(':name')
   findOne(@Param('name') name: string) {
     return this.customersService.findOne(name);
   }
 
+  @UseGuards(AuthCustomerGuard)
   @Put(':id')
   update(
     @Param('id') id: string,
@@ -41,6 +45,7 @@ export class CustomersController {
     return this.customersService.update(+id, updateCustomerDto);
   }
 
+  @UseGuards(AuthGuardAdmin)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.customersService.remove(+id);

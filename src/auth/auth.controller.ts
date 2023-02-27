@@ -7,6 +7,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { AuthGuardAdmin } from 'src/guard/auth.admin.guard';
+import { AuthCustomerGuard } from 'src/guard/auth.customer.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -35,7 +36,7 @@ export class AuthController {
     return customer;
   }
 
-  @UseGuards(AuthGuardAdmin)
+  @UseGuards(AuthCustomerGuard)
   @Get('customer/profile')
   getcustomer(@Request() req) {
     return req.user;
